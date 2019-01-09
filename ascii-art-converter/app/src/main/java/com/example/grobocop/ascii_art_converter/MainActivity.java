@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
                 new MaterialFilePicker()
                         .withActivity(MainActivity.this)
                         .withRequestCode(1)
-                        .withFilter(Pattern.compile(".*\\.jpg")) // Filtering files and directories by file name using regexp
+                        .withFilter(Pattern.compile(".*\\.(jpg|png)$")) // Filtering files and directories by file name using regexp
                         .withFilterDirectories(false) // Set directories filterable (false by default)
                         .withHiddenFiles(true) // Show hidden files and folders
                         .start();

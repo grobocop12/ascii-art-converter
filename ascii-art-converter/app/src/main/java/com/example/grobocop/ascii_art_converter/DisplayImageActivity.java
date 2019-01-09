@@ -13,7 +13,7 @@ public class DisplayImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_image);
 
-        String imagePath = getIntent().getStringExtra(ExploreFilesActivity.EXTRA_IMAGE_PATH);
+        String imagePath = getIntent().getStringExtra(MainActivity.EXTRA_IMAGE_PATH);
         Bitmap image = BitmapFactory.decodeFile(imagePath);
         ImageView imgView = (ImageView) findViewById(R.id.imageView);
         imgView.setImageBitmap(image);
