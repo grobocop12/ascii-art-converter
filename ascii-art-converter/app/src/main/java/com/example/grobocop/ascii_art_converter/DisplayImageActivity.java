@@ -15,7 +15,11 @@ public class DisplayImageActivity extends AppCompatActivity {
 
         String imagePath = getIntent().getStringExtra(MainActivity.EXTRA_IMAGE_PATH);
         Bitmap image = BitmapFactory.decodeFile(imagePath);
+
+        int nh = (int) ( image.getHeight() * (512.0 / image.getWidth()) );
+        Bitmap scaled = Bitmap.createScaledBitmap(image, 512, nh, true);
+
         ImageView imgView = (ImageView) findViewById(R.id.imageView);
-        imgView.setImageBitmap(image);
+        imgView.setImageBitmap(scaled);
     }
 }

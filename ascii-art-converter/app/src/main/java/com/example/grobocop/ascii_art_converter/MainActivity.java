@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_IMAGE_PATH = "com.example.grobocop.ascii_art_converter.EXTRA_IMAGE";
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
     @Override
@@ -47,7 +50,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        Button takePhotoButton = (Button) findViewById(R.id.take_photo_button);
+        takePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),TakePhotoActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -74,10 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    public void onClickTakePhoto(View v) {
-
     }
 
 }
