@@ -1,0 +1,4 @@
+#Thu Jan 10 09:23:15 CET 2019
+base.0=/home/grobocop/ascii-art-converter/ascii-art-converter/app/build/intermediates/transforms/dexMerger/debug/0
+path.0=classes.dex
+renamed.0=classes.dex

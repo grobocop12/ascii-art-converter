@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "/home/grobocop/ascii-art-converter/ascii-art-converter/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/home/grobocop/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.0.0.aar/f2e4ce2890c9c953b21804d2df82b511/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

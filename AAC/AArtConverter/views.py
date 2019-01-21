@@ -35,13 +35,13 @@ def index(request):
     img = PIL.Image.new('RGB',(screen.virtual_size[0]*3,screen.virtual_size[1]*7), color=(0,0,0))
     d = PIL.ImageDraw.Draw(img)
     d.text((0,0), screen.render(), fill=(255, 255, 255),align='center' )
-    img.save('image.jpg', 'png')    
+    img.save('static/image.png', 'png')    
     
-    image_data = open("image.jpg", "rb").read()
+    image_data = open("static/image.png", "rb").read()
     data = {
-        'url':'/static/lena.jpg'
+        'url':'/static/image.png'
         }
     
-    #return HttpResponse(image_data, content_type="image/jpg")
+    #return HttpResponse(image_data, content_type="image/png")
     return JsonResponse(data)
 
