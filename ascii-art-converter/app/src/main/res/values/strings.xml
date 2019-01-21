@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">ascii-art-converter</string>
-    <string name="explore_files_button">Find file to convert</string>
-    <string name="take_photo_button">Take photo</string>
-
-    <string name="title_activity_convert_image">ConvertImageActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-</resources>
