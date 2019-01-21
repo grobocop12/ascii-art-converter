@@ -12,9 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import com.bachors.img2ascii.Img2Ascii;
-
-import com.bachors.img2ascii.Img2Ascii;
+import com.bumptech.glide.Glide;
 
 public class ConvertImageActivity extends AppCompatActivity {
 
@@ -30,9 +28,22 @@ public class ConvertImageActivity extends AppCompatActivity {
 
         String imagePath = getIntent().getStringExtra(MainActivity.EXTRA_IMAGE_PATH);
 
-        Bitmap image = BitmapFactory.decodeFile(imagePath);
+        ImageView loadImage = (ImageView) findViewById(R.id.loadImageView);
 
-        asciiTextView = (TextView) findViewById(R.id.asciiart);
+        Glide
+                .with(this)
+                .load("http://157.158.200.33:80/AArtConverter/")
+                .into(loadImage);
+
+
+
+       // Bitmap image = BitmapFactory.decodeFile(imagePath);
+
+
+
+      //  int nh = (int) ( image.getHeight() * (512.0 / image.getWidth()) );
+
+      //  Bitmap scaled = Bitmap.createScaledBitmap(image, 512, nh, true);
 
        // String yourAsciiArtData = ""; // from assets or network or...
 
@@ -41,21 +52,6 @@ public class ConvertImageActivity extends AppCompatActivity {
         asciiArtView.setTypeface(Typeface.create( "Sans-serif", Typeface.NORMAL));
 */
 
-       new Img2Ascii()
-                .bitmap(image)
-                .quality(2) // 1 - 5
-                .color(true)
-                .convert(new Img2Ascii.Listener() {
-                    @Override
-                    public void onProgress(int percentage) {
-                        asciiTextView.setText(String.valueOf(percentage) + " %");
-                        Log.d(TAG, String.valueOf(percentage) + " %");
-                    }
-                    @Override
-                    public void onResponse(Spannable text) {
-                        asciiTextView.setText(text);
-                    }
-                });
 
 
     }

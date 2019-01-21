@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
+//import uk.co.senab.photoview.PhotoViewAttacher;
 
 
 
@@ -36,8 +36,8 @@ public class DisplayImageActivity extends AppCompatActivity {
         ImageView imgView = (ImageView) findViewById(R.id.imageView);
         Bitmap scaled = Bitmap.createScaledBitmap(image, 512, nh, true);
         imgView.setImageBitmap(scaled);
-        PhotoViewAttacher photoView =  new PhotoViewAttacher(imgView);
-        photoView.update();
+        //PhotoViewAttacher photoView =  new PhotoViewAttacher(imgView);
+        //photoView.update();
 
         Button convertButton = (Button) findViewById(R.id.ConvertImageButton);
 
