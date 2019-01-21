@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
 from django.shortcuts import render
 import aalib
 import io
 import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
-
+import os
 
 # Create your views here.
 
@@ -37,5 +38,10 @@ def index(request):
     img.save('image.jpg', 'png')    
     
     image_data = open("image.jpg", "rb").read()
-    return HttpResponse(image_data, content_type="image/jpg")
+    data = {
+        'url':'/static/lena.jpg'
+        }
+    
+    #return HttpResponse(image_data, content_type="image/jpg")
+    return JsonResponse(data)
 
