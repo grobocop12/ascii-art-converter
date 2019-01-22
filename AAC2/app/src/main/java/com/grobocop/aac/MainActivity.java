@@ -19,9 +19,16 @@ import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +42,48 @@ public class MainActivity extends AppCompatActivity {
 
 
         imgView = findViewById(R.id.mainImageView);
-        RequestQueue queue = Volley.newRequestQueue(this);
+
+        OkHttpClient client = new OkHttpClient();
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(Url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if(response.isSuccessful()){
+                    final String responseData = response.body().string();
+
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(responseData);
+                                String imageUrl;
+                                imageUrl = jsonResponse.getString("url");
+
+                                Glide
+                                        .with(imgView.getContext())
+                                        .load(Url+imageUrl)
+                                        .into(imgView);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+        /*RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url,
                 null,
@@ -58,11 +106,12 @@ public class MainActivity extends AppCompatActivity {
                 },null
         );
 
+
         request.setRetryPolicy(new DefaultRetryPolicy(20000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
-
+*/
 
         //ImageView imgView = findViewById(R.id.mainImageView);
 
