@@ -9,37 +9,39 @@ import PIL.Image
 import PIL.ImageDraw
 import PIL.ImageFont
 import os
-
+import uuid
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.generic import TemplateView
 # Create your views here.
 
 
+@csrf_exempt
 def index(request):
+    if request.method == 'POST':
+        for key in request.FILES:
+            print(key)
+        uploaded_file = request.FILES['uploaded_file']
+        print(type(uploaded_file))
+        image = PIL.Image.open(uploaded_file,'r').convert('L')
     
-    '''
-    if (request.method =="POST"):
-        uploaded_file = request.files['file']
-        
-        return response
-    
-    return HttpResponse()
-    '''
-    image =  PIL.Image.open('lena.jpg','r').convert('L')
+        #image =  PIL.Image.open('lena.jpg','r').convert('L')
     
     size = image.size    
     print(size)
     screen = aalib.AsciiScreen(width = size[0], height=size[1])
     
-    image =  PIL.Image.open('lena.jpg','r').convert('L').resize(screen.virtual_size)
+    #image =  PIL.Image.open('lena.jpg','r').convert('L').resize(screen.virtual_size)
     screen.put_image((0,0),image)
     
-    img = PIL.Image.new('RGB',(screen.virtual_size[0]*3,screen.virtual_size[1]*7), color=(0,0,0))
+    img = PIL.Image.new('RGB',(size[0],size[1]), color=(0,0,0))
     d = PIL.ImageDraw.Draw(img)
     d.text((0,0), screen.render(), fill=(255, 255, 255),align='center' )
-    img.save('static/image.png', 'png')    
+    name = str(uuid.uuid4())+'.png'
+    img.save('static/'+name, 'png')    
     
-    image_data = open("static/image.png", "rb").read()
+    image_data = open("static/"+name, "rb").read()
     data = {
-        'url':'/static/image.png'
+        'url':('/static/'+name)
         }
     
     #return HttpResponse(image_data, content_type="image/png")
