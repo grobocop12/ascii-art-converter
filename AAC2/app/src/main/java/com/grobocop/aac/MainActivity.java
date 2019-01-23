@@ -72,15 +72,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button takePhotoButton = (Button) findViewById(R.id.takePhotoButton);
-        takePhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), TakePhotoActivity.class);
-                startActivity(intent);
 
-            }
-        });
     }
 
     @Override
