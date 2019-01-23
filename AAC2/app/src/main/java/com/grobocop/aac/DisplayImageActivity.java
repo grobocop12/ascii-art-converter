@@ -21,7 +21,10 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -50,9 +53,9 @@ public class DisplayImageActivity extends AppCompatActivity {
 
         imagePath = getIntent().getStringExtra(MainActivity.EXTRA_IMAGE_PATH);
         Bitmap image = BitmapFactory.decodeFile(imagePath);
-        int nh = (int) (image.getHeight() * (512.0 / image.getWidth()));
+
         imgView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
-        Bitmap scaled = Bitmap.createScaledBitmap(image, 512, nh, true);
+
         imgView.setImage(ImageSource.bitmap(image));
 
 
@@ -61,18 +64,17 @@ public class DisplayImageActivity extends AppCompatActivity {
         convertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final MediaType MEDIA_TYPE_MARKDOWN
-                        = MediaType.parse("image/png");
+
 
                 final OkHttpClient client = new OkHttpClient();
                 File file = new File(imagePath);
                 String content_type = getMimeType(imagePath);
-                RequestBody fileBody = RequestBody.create(MediaType.parse(content_type),file);
+                RequestBody fileBody = RequestBody.create(MediaType.parse(content_type), file);
 
                 RequestBody body = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("type",content_type)
-                        .addFormDataPart("uploaded_file","image",fileBody)
+                        .addFormDataPart("type", content_type)
+                        .addFormDataPart("uploaded_file", "image", fileBody)
                         .build();
 
 
@@ -99,19 +101,41 @@ public class DisplayImageActivity extends AppCompatActivity {
                                     JSONObject jsonResponse = new JSONObject(responseData);
                                     String imageUrl;
                                     imageUrl = jsonResponse.getString("url");
-                                    imgView.setImage(ImageSource.resource(R.color.transparent));
+                                    //imgView.setImage(ImageSource.resource(R.color.transparent));
                                     Glide.with(imgView.getContext())
                                             .asBitmap()
-                                            .load(imageUrl)
+                                            .load(Url + imageUrl)
                                             .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.AUTOMATIC))
                                             .into(new SimpleTarget<Bitmap>() {
                                                 @Override
                                                 public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-                                                    imgView.setImage(ImageSource.bitmap(bitmap)); //For SubsampleImage
+
+                                                    int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                                                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1280, 720, true);
+                                                    imgView.setImage(ImageSource.bitmap(scaled)); //For SubsampleImage
+
+                                                    File f = new File(DisplayImageActivity.this.getCacheDir(), "temp.png");
+                                                    try {
+                                                        f.createNewFile();
+
+                                                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                                                        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                                                        byte[] bitmapdata = bos.toByteArray();
+
+                                                        FileOutputStream fos = new FileOutputStream(f);
+                                                        fos.write(bitmapdata);
+                                                        fos.flush();
+                                                        fos.close();
+
+                                                    } catch (FileNotFoundException e) {
+                                                        e.printStackTrace();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+
                                                 }
                                             });
-
-
 
 
                                 } catch (JSONException e) {
@@ -133,7 +157,7 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     }
 
-    private  String  getMimeType(String filePath){
+    private String getMimeType(String filePath) {
         String extension = MimeTypeMap.getFileExtensionFromUrl(filePath);
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
