@@ -51,10 +51,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
-        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M
+                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1001);
 
+        }
 
         Button pickFileButton = (Button) findViewById(R.id.pickFileButton);
         pickFileButton.setOnClickListener(new View.OnClickListener() {
@@ -70,88 +72,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-       /* imgView = findViewById(R.id.mainImageView);
-
-        OkHttpClient client = new OkHttpClient();
-
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(Url)
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {}
+        Button takePhotoButton = (Button) findViewById(R.id.takePhotoButton);
+        takePhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), TakePhotoActivity.class);
+                startActivity(intent);
 
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                if(response.isSuccessful()){
-                    final String responseData = response.body().string();
-
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                JSONObject jsonResponse = new JSONObject(responseData);
-                                String imageUrl;
-                                imageUrl = jsonResponse.getString("url");
-
-                                Glide
-                                        .with(imgView.getContext())
-                                        .load(Url+imageUrl)
-                                        .into(imgView);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                }
             }
         });
-        */
-
-        /*RequestQueue queue = Volley.newRequestQueue(this);
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url,
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String imageUrl;
-                        try {
-                            imageUrl = response.getString("url");
-
-                            Glide
-                                    .with(imgView.getContext())
-                                    .load(Url+imageUrl)
-                                    .into(imgView);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },null
-        );
-
-
-        request.setRetryPolicy(new DefaultRetryPolicy(20000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
-*/
-
-        //ImageView imgView = findViewById(R.id.mainImageView);
-
-        /*Glide
-                .with(this)
-                .load(Url + 	"/static/lena.jpg")
-                .into(imgView);*/
-
-
     }
 
     @Override
@@ -166,4 +95,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+
 }
