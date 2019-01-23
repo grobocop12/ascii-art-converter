@@ -1,14 +1,14 @@
 package com.grobocop.aac;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,22 +17,21 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -42,6 +41,7 @@ public class DisplayImageActivity extends AppCompatActivity {
     private String imagePath;
     private SubsamplingScaleImageView imgView;
     private Response imageResponse;
+    private Bitmap convertedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,36 @@ public class DisplayImageActivity extends AppCompatActivity {
 
 
         Button convertButton = (Button) findViewById(R.id.ConvertImageButton);
+        final Button saveButton = (Button) findViewById(R.id.SaveImageButton);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date currentTime = Calendar.getInstance().getTime();
+                File f = new File(DisplayImageActivity.this.getCacheDir(), currentTime.toString());
+                try {
+                    f.createNewFile();
+
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    convertedBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();
+                    MediaStore.Images.Media.insertImage(getContentResolver(),f.getAbsolutePath(),f.getName(),f.getName());
+                    Toast.makeText(DisplayImageActivity.this,"Image saved at: " + f.getAbsolutePath(),Toast.LENGTH_LONG).show();
+
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
         convertButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +131,7 @@ public class DisplayImageActivity extends AppCompatActivity {
                                     JSONObject jsonResponse = new JSONObject(responseData);
                                     String imageUrl;
                                     imageUrl = jsonResponse.getString("url");
-                                    //imgView.setImage(ImageSource.resource(R.color.transparent));
+
                                     Glide.with(imgView.getContext())
                                             .asBitmap()
                                             .load(Url + imageUrl)
@@ -109,35 +139,11 @@ public class DisplayImageActivity extends AppCompatActivity {
                                             .into(new SimpleTarget<Bitmap>() {
                                                 @Override
                                                 public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-
-                                                    int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
-                                                    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 1280, 720, true);
-                                                    imgView.setImage(ImageSource.bitmap(scaled)); //For SubsampleImage
-
-                                                    File f = new File(DisplayImageActivity.this.getCacheDir(), "temp.png");
-                                                    try {
-                                                        f.createNewFile();
-
-                                                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                                                        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-                                                        byte[] bitmapdata = bos.toByteArray();
-
-                                                        FileOutputStream fos = new FileOutputStream(f);
-                                                        fos.write(bitmapdata);
-                                                        fos.flush();
-                                                        fos.close();
-
-                                                    } catch (FileNotFoundException e) {
-                                                        e.printStackTrace();
-                                                    } catch (IOException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-
+                                                    saveButton.setEnabled(true);
+                                                    convertedBitmap = bitmap;
+                                                    imgView.setImage(ImageSource.bitmap(convertedBitmap)); //For SubsampleImage
                                                 }
                                             });
-
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
