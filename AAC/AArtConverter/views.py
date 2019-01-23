@@ -17,13 +17,14 @@ from django.views.generic import TemplateView
 
 @csrf_exempt
 def index(request):
-    screen = aalib.AsciiScreen(width = 160, height = 144)
+    screen = aalib.AsciiScreen(width = 234, height = 120)
     if request.method == 'POST':
         uploaded_file = request.FILES['uploaded_file']
         image = PIL.Image.open(uploaded_file,'r').convert('L').resize(screen.virtual_size)
     
         #image =  PIL.Image.open('lena.jpg','r').convert('L')
-    
+    else:
+        image =  PIL.Image.open('lena.jpg','r').convert('L').resize(screen.virtual_size)
     #screen = aalib.AsciiScreen()
     
     #image =  PIL.Image.open('lena.jpg','r').convert('L').resize(screen.virtual_size)
@@ -32,7 +33,7 @@ def index(request):
     
     #img = PIL.Image.new('RGB',(int(screen.virtual_size[0]*3),screen.virtual_size[1]*4), color=(0,0,0))
     
-    img = PIL.Image.new('RGB',(900,2150), color=(0,0,0))
+    img = PIL.Image.new('RGB',(1410,1800), color=(0,0,0))
     d = PIL.ImageDraw.Draw(img)
     d.text((0,0), screen.render(), fill=(255, 255, 255),align='center' )
     name = str(uuid.uuid4())+'.png'
