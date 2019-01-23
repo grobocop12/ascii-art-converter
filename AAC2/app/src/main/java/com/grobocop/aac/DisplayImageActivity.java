@@ -6,13 +6,17 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +37,7 @@ public class DisplayImageActivity extends AppCompatActivity {
 
     public String Url = "http://192.168.0.132";
     private String imagePath;
-    private ImageView imgView;
+    private SubsamplingScaleImageView imgView;
     private Response imageResponse;
 
     @Override
@@ -47,9 +51,9 @@ public class DisplayImageActivity extends AppCompatActivity {
         imagePath = getIntent().getStringExtra(MainActivity.EXTRA_IMAGE_PATH);
         Bitmap image = BitmapFactory.decodeFile(imagePath);
         int nh = (int) (image.getHeight() * (512.0 / image.getWidth()));
-        imgView = (ImageView) findViewById(R.id.imageView);
+        imgView = (SubsamplingScaleImageView) findViewById(R.id.imageView);
         Bitmap scaled = Bitmap.createScaledBitmap(image, 512, nh, true);
-        imgView.setImageBitmap(scaled);
+        imgView.setImage(ImageSource.bitmap(image));
 
 
         Button convertButton = (Button) findViewById(R.id.ConvertImageButton);
@@ -95,15 +99,20 @@ public class DisplayImageActivity extends AppCompatActivity {
                                     JSONObject jsonResponse = new JSONObject(responseData);
                                     String imageUrl;
                                     imageUrl = jsonResponse.getString("url");
-                                    imgView.setImageResource(android.R.color.transparent);
+                                    imgView.setImage(ImageSource.resource(R.color.transparent));
+                                    Glide.with(imgView.getContext())
+                                            .asBitmap()
+                                            .load(imageUrl)
+                                            .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.AUTOMATIC))
+                                            .into(new SimpleTarget<Bitmap>() {
+                                                @Override
+                                                public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
+                                                    imgView.setImage(ImageSource.bitmap(bitmap)); //For SubsampleImage
+                                                }
+                                            });
 
 
 
-
-                                    Glide
-                                            .with(imgView.getContext())
-                                            .load(Url+imageUrl)
-                                            .into(imgView);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
